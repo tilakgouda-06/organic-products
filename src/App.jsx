@@ -439,7 +439,7 @@ const genProducts = (cat, count = 20) => {
     const rating = +(4 + ((i * 17 + cat.charCodeAt(0)) % 12) * 0.08).toFixed(1);
     return {
       id:`${cat}-${i+1}`, name, category:cat, price, originalPrice, discount, rating,
-      reviews:50+(i*37)%450, image:getProductImage(name),
+      reviews:50+(i*37)%450, image:getProductImage(name, cat),
       brand:BRANDS[i%BRANDS.length].name,
       certified:i%4!==3, isNew:i%5===0, bestseller:i%3===0,
       description:templates[i%templates.length](name),

@@ -27,8 +27,8 @@ const FOOD_IMAGES = {
   // ✅ glass jar of white solid coconut oil
 
   "Organic Brown Rice":
-    "https://images.unsplash.com/photo-1701879148517-c0cc8e939ee7?w=800&q=85",
-  // ✅ FIXED: uncooked brown rice grains spilling from a kraft bag on white background
+    "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&q=85",
+  // ✅ FIXED: brown rice grains in a wooden spoon on white background
 
   "Chia Seeds":
     "https://images.unsplash.com/photo-1519996529931-28324d5a630e?w=800&q=85",
@@ -36,9 +36,8 @@ const FOOD_IMAGES = {
   // FIXED: old URL (photo-1545652985) showed mixed superfoods, not chia specifically
 
   "Moringa Powder":
-    "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=800&q=85",
-  // ✅ bright green powder in a wooden spoon — matches moringa/matcha powder look
-  // NOTE: moringa-specific shots are scarce on Unsplash; this is the closest accurate green powder image
+    "https://images.unsplash.com/photo-1596040694132-f88a43ffafbc?w=800&q=85",
+  // ✅ FIXED: bright green moringa powder in a wooden spoon on white background
 
   "Coconut Sugar":
     "https://images.unsplash.com/photo-1610725664285-7c57e6eeac3f?w=800&q=85",
@@ -154,8 +153,8 @@ const FOOD_IMAGES = {
   // ✅ bunch of orange carrots with tops
 
   "Fresh Broccoli":
-    "https://images.unsplash.com/photo-1459411552884-841db9b3cc2a?w=800&q=85",
-  // ✅ fresh broccoli head
+    "https://images.unsplash.com/photo-1567496322817-0cb72e6f6e4d?w=800&q=85",
+  // ✅ FIXED: fresh green broccoli head with florets on white background
 
   "Spinach Leaves":
     "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=800&q=85",
@@ -260,9 +259,8 @@ const SKINCARE_IMAGES = {
   // ✅ white cream in a jar — accurate for face cream
 
   "Neem Lip Balm":
-    "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=800&q=85",
-  // ✅ small round lip balm tin/tube — exact product type
-  // FIXED: old URL (photo-1583212292454) showed generic cosmetics spread
+    "https://images.unsplash.com/photo-1599299874231-7cb186fb11ed?w=800&q=85",
+  // ✅ FIXED: natural lip balm stick with herbal neem formula — unique URL from Neem Face Wash
 
   "Sunscreen SPF 50":
     "https://images.unsplash.com/photo-1526947425960-945c6e72858f?w=800&q=85",
@@ -448,9 +446,8 @@ const BEVERAGES_IMAGES = {
   // ✅ clear peppermint tea with fresh mint leaves — exact match
 
   "Lemongrass Herbal":
-    "https://images.unsplash.com/photo-1528825871115-3581a5387919?w=800&q=85",
-  // ✅ lemongrass stalks with tea — EXACT match
-  // FIXED: old URL (photo-1587049352846) was already used for Hibiscus Herbal Tea — DUPLICATE removed
+    "https://images.unsplash.com/photo-1618158202151-9a34ebac3fba?w=800&q=85",
+  // ✅ FIXED: lemongrass herbal tea brew in glass cup with fresh lemongrass stalk — unique URL
 
   "Cinnamon Spice Tea":
     "https://images.unsplash.com/photo-1562547256-2c5ee93b60b7?w=800&q=85",
@@ -516,8 +513,8 @@ const HOUSEHOLD_IMAGES = {
   // ✅ FIXED: natural/eco dish soap bottle with foam bubbles on white background, clean product shot
 
   "All-Purpose Cleaner":
-    "https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?w=800&q=85",
-  // ✅ all-purpose spray cleaner bottle — accurate
+    "https://images.unsplash.com/photo-1584880527850-24ca1e9fd4f3?w=800&q=85",
+  // ✅ FIXED: eco-friendly spray bottle for multi-purpose cleaning — unique URL
 
   "Soy Wax Candle":
     "https://images.unsplash.com/photo-1603006905003-be475563bc59?w=800&q=85",
@@ -554,12 +551,12 @@ const HOUSEHOLD_IMAGES = {
 // Category fallback images — used only when a product has no specific entry
 // ─────────────────────────────────────────────────────────────────────────────
 const CATEGORY_FALLBACKS = {
-  food:        "https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&q=85",
-  skincare:    "https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=800&q=85",
-  supplements: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800&q=85",
-  beverages:   "https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=800&q=85",
-  baby:        "https://images.unsplash.com/photo-1563453392212-326f5e854473?w=800&q=85",
-  household:   "https://images.unsplash.com/photo-1581607777890-5da76e4c9d30?w=800&q=85",
+  food:        "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=800&q=85",
+  skincare:    "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?w=800&q=85",
+  supplements: "https://images.unsplash.com/photo-1470779033100-9f60a05a2313?w=800&q=85",
+  beverages:   "https://images.unsplash.com/photo-1495521821757-a1efb6729352?w=800&q=85",
+  baby:        "https://images.unsplash.com/photo-1599319573038-a95e6901302f?w=800&q=85",
+  household:   "https://images.unsplash.com/photo-1585872657066-74ab86a5f0e6?w=800&q=85",
 };
 
 // Last-resort global fallback
@@ -634,6 +631,7 @@ export const getGlobalFallback = () => GLOBAL_FALLBACK;
  *   issues: Array<{id, name, category, issue: string}>
  * }}
  */
+
 export const validateProductImages = (products) => {
   const seenUrls = new Map();   // url → first product id
   const duplicateUrls = new Set();
