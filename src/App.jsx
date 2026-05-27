@@ -368,8 +368,27 @@ injectStyles();
 // [2] IMAGE SYSTEM — Import from centralized products.js
 // ═══════════════════════════════════════════════════════════════════════════════
 
-import { getProductImage, getGlobalFallback } from "./data/products.js";
+import { getProductImage, getGlobalFallback, preloadImages } from "./data/products.js";
 const FALLBACK_IMG = getGlobalFallback();
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// [2a] LAZY IMAGE COMPONENT — Reusable image loading with error handling
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const LazyImage = memo((props) => {
+  const { src, alt, onError, style = {}, containerStyle = {}, loading = "lazy", objectFit = "cover", aspectRatio = "1", showSkeleton = true } = props;
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [imgErr, setImgErr] = useState(false);
+  const displaySrc = imgErr ? FALLBACK_IMG : src;
+  return (
+    <div style={{ position: "relative", overflow: "hidden", aspectRatio, background: "var(--bg-alt)", ...containerStyle }}>
+      {!imgLoaded && showSkeleton && <div className="skeleton" style={{ position: "absolute", inset: 0 }} aria-hidden="true"/>}
+      <img src={displaySrc} alt={alt} loading={loading} onLoad={() => setImgLoaded(true)} onError={() => { setImgErr(true); setImgLoaded(true); onError?.(); }} 
+        style={{ width: "100%", height: "100%", objectFit, display: "block", opacity: imgLoaded ? 1 : 0, transition: "opacity 0.35s var(--ease-out)", ...style }}/>
+    </div>
+  );
+});
+LazyImage.displayName = "LazyImage";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // [3] DATA LAYER
@@ -784,31 +803,28 @@ const ProductCard = memo(({ product, onAddToCart, onView }) => {
       </button>
       <div role="button" tabIndex={0} aria-label={`View details for ${product.name}`}
         onClick={handleView} onKeyDown={e=>e.key==="Enter"&&handleView()}
-        style={{ height:230, overflow:"hidden", background:"var(--bg-alt)", position:"relative" }}>
-        {!imgLoaded && <div className="skeleton" style={{ position:"absolute", inset:0 }} aria-hidden="true"/>}
-        <img src={src} alt={product.name} loading="lazy"
-          onLoad={()=>setImgLoaded(true)} onError={()=>{setImgErr(true);setImgLoaded(true);}}
-          style={{ width:"100%", height:"100%", objectFit:"cover", transition:"transform 0.5s var(--ease-out)", transform:hov?"scale(1.08)":"scale(1)", opacity:imgLoaded?1:0 }}/>
+        style={{ height:"clamp(200px, 30vw, 280px)", overflow:"hidden", background:"var(--bg-alt)", position:"relative" }}>
+        <LazyImage src={src} alt={product.name} style={{ transition:"transform 0.5s var(--ease-out)", transform:hov?"scale(1.08)":"scale(1)" }} containerStyle={{ height:"100%" }} objectFit="cover" aspectRatio="auto" onError={()=>setImgErr(true)}/>
       </div>
-      <div style={{ padding:"18px", flex:1, display:"flex", flexDirection:"column", justifyContent:"space-between", gap:10 }}>
-        <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
-          <p style={{ fontSize:10, color:"var(--primary-light)", fontWeight:700, margin:0, letterSpacing:"1px", textTransform:"uppercase" }}>{product.brand}</p>
+      <div style={{ padding:"clamp(12px, 2vw, 18px)", flex:1, display:"flex", flexDirection:"column", justifyContent:"space-between", gap:"clamp(8px, 1.5vw, 10px)" }}>
+        <div style={{ display:"flex", flexDirection:"column", gap:"clamp(4px, 1vw, 6px)" }}>
+          <p style={{ fontSize:"clamp(9px, 1vw, 11px)", color:"var(--primary-light)", fontWeight:700, margin:0, letterSpacing:"0.5px", textTransform:"uppercase" }}>{product.brand}</p>
           <h3 role="button" tabIndex={0} onClick={handleView} onKeyDown={e=>e.key==="Enter"&&handleView()}
-            style={{ fontFamily:"var(--font-body)", fontWeight:600, fontSize:15, color:"var(--text-primary)", margin:0, lineHeight:1.4, display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden", cursor:"pointer" }}>
+            style={{ fontFamily:"var(--font-body)", fontWeight:600, fontSize:"clamp(13px, 1.5vw, 15px)", color:"var(--text-primary)", margin:0, lineHeight:1.35, display:"-webkit-box", WebkitLineClamp:2, WebkitBoxOrient:"vertical", overflow:"hidden", cursor:"pointer" }}>
             {product.name}
           </h3>
-          <div style={{ display:"flex", alignItems:"center", gap:6 }}>
-            <Stars rating={product.rating} size={12}/>
-            <span style={{ fontSize:12, color:"var(--text-muted)" }}>({product.reviews})</span>
+          <div style={{ display:"flex", alignItems:"center", gap:4 }}>
+            <Stars rating={product.rating} size={11}/>
+            <span style={{ fontSize:"clamp(10px, 1vw, 12px)", color:"var(--text-muted)" }}>({product.reviews})</span>
           </div>
-          <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-            <span style={{ fontSize:20, fontWeight:700, color:"var(--primary)" }}>₹{product.price.toLocaleString("en-IN")}</span>
-            <span style={{ fontSize:13, color:"var(--text-muted)", textDecoration:"line-through" }}>₹{product.originalPrice.toLocaleString("en-IN")}</span>
+          <div style={{ display:"flex", alignItems:"center", gap:6, flexWrap:"wrap" }}>
+            <span style={{ fontSize:"clamp(16px, 2vw, 20px)", fontWeight:700, color:"var(--primary)" }}>₹{product.price.toLocaleString("en-IN")}</span>
+            <span style={{ fontSize:"clamp(11px, 1.2vw, 13px)", color:"var(--text-muted)", textDecoration:"line-through" }}>₹{product.originalPrice.toLocaleString("en-IN")}</span>
           </div>
         </div>
-        <button onClick={handleAdd}
-          style={{ width:"100%", background:hov?"var(--primary)":"var(--accent-warm)", border:"none", borderRadius:"var(--radius-md)", padding:"11px 18px", fontSize:13, fontWeight:600, cursor:"pointer", color:hov?"#fff":"var(--primary)", transition:"all 0.25s", display:"flex", alignItems:"center", justifyContent:"center", gap:8, animation:addAnim?"cartBounce 0.5s ease":"none", fontFamily:"var(--font-body)" }}>
-          {Ic.cart(15, hov?"#fff":"var(--primary)")} Add to Cart
+        <button onClick={handleAdd} aria-label={`Add ${product.name} to cart`}
+          style={{ width:"100%", background:hov?"var(--primary)":"var(--accent-warm)", border:"none", borderRadius:"var(--radius-md)", padding:"clamp(9px, 1.5vw, 12px) clamp(14px, 2vw, 18px)", fontSize:"clamp(12px, 1.2vw, 13px)", fontWeight:600, cursor:"pointer", color:hov?"#fff":"var(--primary)", transition:"all 0.25s", display:"flex", alignItems:"center", justifyContent:"center", gap:6, animation:addAnim?"cartBounce 0.5s ease":"none", fontFamily:"var(--font-body)" }}>
+          {Ic.cart(14, hov?"#fff":"var(--primary)")} Add
         </button>
       </div>
     </article>
@@ -846,9 +862,7 @@ const ProductDetail = memo(({ product, onAddToCart, onClose, onCheckout }) => {
     <Modal open={!!product} onClose={onClose} maxWidth={900}>
       <div className="product-detail-grid" style={{ display:"grid", gridTemplateColumns:"1fr 1.1fr", gap:"clamp(20px,4vw,32px)", alignItems:"start" }}>
         <div>
-          <img src={product.image} alt={product.name}
-            onError={e=>{e.target.src=FALLBACK_IMG;}}
-            style={{ width:"100%", borderRadius:"var(--radius-lg)", objectFit:"cover", aspectRatio:"1", display:"block", boxShadow:"var(--shadow-md)" }}/>
+          <LazyImage src={product.image} alt={product.name} style={{ borderRadius:"var(--radius-lg)", boxShadow:"var(--shadow-md)", display:"block" }} containerStyle={{ aspectRatio:"1", borderRadius:"var(--radius-lg)" }} objectFit="cover"/>
         </div>
         <div>
           <div style={{ display:"flex", gap:8, marginBottom:14, flexWrap:"wrap" }}>
@@ -1049,9 +1063,7 @@ const CartSidebar = memo(({ isOpen, onClose, cart, onUpdateQty, onRemove, onChec
             <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
               {cart.map(item=>(
                 <div key={item.id} style={{ display:"flex", gap:16, padding:16, background:"var(--bg)", borderRadius:"var(--radius-md)", animation:"fadeIn 0.3s ease" }}>
-                  <img src={item.image} alt={item.name} loading="lazy"
-                    onError={e=>{e.target.src=FALLBACK_IMG;}}
-                    style={{ width:80, height:80, borderRadius:"var(--radius-sm)", objectFit:"cover", flexShrink:0 }}/>
+                  <LazyImage src={item.image} alt={item.name} style={{}} containerStyle={{ width:80, height:80, flexShrink:0, borderRadius:"var(--radius-sm)" }} objectFit="cover" aspectRatio="1"/>
                   <div style={{ flex:1, minWidth:0 }}>
                     <h4 style={{ fontSize:14, fontWeight:600, color:"var(--text-primary)", marginBottom:4, lineHeight:1.3 }}>{item.name}</h4>
                     <p style={{ fontSize:11, color:"var(--text-muted)", marginBottom:10 }}>{item.brand}</p>
@@ -1355,7 +1367,7 @@ const ProfileModal = memo(({ open, onClose, user, onSave, onLogout }) => {
       <div style={{textAlign:"center",marginBottom:28}}>
         <div style={{position:"relative",display:"inline-block"}}>
           <div style={{width:96,height:96,borderRadius:"50%",background:"var(--accent-warm)",display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 10px",overflow:"hidden",border:"3px solid var(--primary-pale)"}}>
-            {avatar?<img src={avatar} alt="Profile" style={{width:"100%",height:"100%",objectFit:"cover"}}/>:<span style={{fontFamily:"var(--font-heading)",fontSize:38,color:"var(--primary)",fontWeight:700}}>{name?name.charAt(0).toUpperCase():"?"}</span>}
+            {avatar?<LazyImage src={avatar} alt="Profile" style={{}} containerStyle={{width:"100%",height:"100%",borderRadius:"50%"}} objectFit="cover" aspectRatio="1"/>:<span style={{fontFamily:"var(--font-heading)",fontSize:38,color:"var(--primary)",fontWeight:700}}>{name?name.charAt(0).toUpperCase():"?"}</span>}
           </div>
           <button onClick={()=>fileRef.current?.click()} aria-label="Upload profile photo"
             style={{position:"absolute",bottom:4,right:0,width:28,height:28,borderRadius:"50%",background:"var(--primary)",border:"2px solid #fff",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>
@@ -1392,6 +1404,11 @@ const Hero = memo(({ setPage }) => {
   const prevIdx = useRef(0);
 
   useEffect(()=>{
+    // Preload hero images for better performance
+    const heroImageUrls = HERO_SLIDES.map(s => s.img);
+    if (typeof window !== 'undefined') {
+      preloadImages(heroImageUrls);
+    }
     const id=setInterval(()=>{
       setIdx(i=>{ prevIdx.current=i; return (i+1)%HERO_SLIDES.length; });
     },6000);
@@ -1672,7 +1689,7 @@ const AboutPage = () => (
             ))}
           </div>
           <div style={{ borderRadius:"var(--radius-xl)", overflow:"hidden", boxShadow:"var(--shadow-xl)" }}>
-            <img src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800&q=85" alt="Organic farm in Karnataka with lush green fields" loading="lazy" style={{ width:"100%", objectFit:"cover", aspectRatio:"4/3" }}/>
+            <LazyImage src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800&q=85" alt="Organic farm in Karnataka with lush green fields" style={{}} containerStyle={{ aspectRatio:"4/3" }} objectFit="cover"/>
           </div>
         </div>
       </div>
@@ -1702,11 +1719,7 @@ const BlogPage = () => (
         <article key={b.id} style={{ background:"var(--white)", borderRadius:"var(--radius-xl)", overflow:"hidden", boxShadow:"var(--shadow-sm)", transition:"all 0.3s var(--ease-out)", cursor:"pointer" }}
           onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-5px)";e.currentTarget.style.boxShadow="var(--shadow-xl)";}}
           onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow="var(--shadow-sm)";}}>
-          <div style={{ height:210, overflow:"hidden" }}>
-            <img src={b.image} alt={b.title} loading="lazy" style={{ width:"100%", height:"100%", objectFit:"cover", transition:"transform 0.5s var(--ease-out)" }}
-              onMouseEnter={e=>e.target.style.transform="scale(1.06)"}
-              onMouseLeave={e=>e.target.style.transform="scale(1)"}/>
-          </div>
+          <LazyImage src={b.image} alt={b.title} style={{ transition:"transform 0.5s var(--ease-out)", transform:"scale(1)" }} containerStyle={{ height:210 }} objectFit="cover" aspectRatio="16/9" onError={()=>{}}/>
           <div style={{ padding:28 }}>
             <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:14 }}>
               <Badge bg="var(--accent-warm)" color="var(--primary)" size="xs">{b.category}</Badge>
